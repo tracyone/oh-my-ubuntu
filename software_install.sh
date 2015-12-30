@@ -225,6 +225,16 @@ fi
 echo "避免ubuntu字体发虚..."
 sudo apt-get remove fonts-arphic-ukai ttf-wqy-zenhei fonts-arphic-uming -y
 
+echo "编译安装其它软件"
+mkdir ~/Work/InstallPurpose
+cd ~/Work/InstallPurpose
+echo "编译安装ag.."
+if [[ ! -d the_silver_searcher ]]; then
+	git clone https://github.com/ggreer/the_silver_searcher
+fi
+AptInstall "automake pkg-config libpcre3-dev zlib1g-dev liblzma-dev"
+cd the_silver_searcher && ./build.sh && sudo make install ;cd -
+
 echo "清除工作...."
 sudo apt-get autoremove -y
 sudo apt-get autoclean
