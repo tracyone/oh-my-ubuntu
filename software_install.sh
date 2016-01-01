@@ -1,20 +1,11 @@
 #!/bin/bash
 # author:tracyone,tracyone@live.cn
 
-# 判断是32位还是64位系统
-# {{{
-function AptInstall()
-{
-	read -n1 -p "Install $1 ?(y/n)" ans
-	if [[ $ans =~ [Yy] ]]; then
-		sudo apt-get install $1 --allow-unauthenticated -y
-	else
-		echo "Do not install $1"
-	fi
-	sleep 2
-}
-# }}}
+shopt -s expand_aliases
+read -p "请输入您的密码:" mypasswd
+alias sudo="echo "${mypasswd}" | sudo -S"
 
+# 判断是32位还是64位系统
 MACHINE_TYPE=`uname -m`
 if [ ${MACHINE_TYPE} == 'x86_64' ]; then
   is_64=1
@@ -22,16 +13,35 @@ else
   is_64=0
 fi
 
-shopt -s expand_aliases
-read -p "请输入您的密码:" mypasswd
-alias sudo="echo "${mypasswd}" | sudo -S"
+# {{{ function definition
+function AptInstall()
+{
+	read -n1 -p "Install $1 ?(y/n)" ans
+	if [[ $ans =~ [Yy] ]]; then
+		sudo apt-get install $1 --allow-unauthenticated -y || AptSignelInstall "$1"
+	else
+		echo -e  "\nAbort install\n"
+	fi
+	sleep 2
+}
+
+# $1:software list to install..
+function AptSingleInstall()
+{
+for i in $1
+do
+	sudo apt-get install $i --allow-unauthenticated -y
+done
+}
+# }}}
+
+
 
 if [[ -d ~/Work ]]; then
 	mkdir -p ~/Work
 fi
 cd ~/Work
 
-mkdir ./temp
 echo "添加仓库------------------------------------"
 echo "添加 git 仓库..."
 sudo add-apt-repository -y ppa:git-core/ppa
@@ -58,6 +68,8 @@ echo "uGet仓库..."
 sudo sudo add-apt-repository ppa:plushuang-tw/uget-stable -y
 echo "macubuntu主题仓库..."
 sudo add-apt-repository ppa:noobslab/themes -y
+echo "wiznote的仓库..."
+sudo add-apt-repository ppa:wiznote-team -y
 echo "Support i386 architecture"
 
 sudo dpkg --add-architecture i386
@@ -69,7 +81,7 @@ echo "更新系统..."
 sudo apt-get upgrade -y
 
 echo "安装和配置 git svn等版本管理工具...."
-AptInstall "git gitk git-gui git-svn"
+AptInstall "git gitk git-gui git-svn tig"
 
 echo "安装RabbitCVS的依赖..."
 AptInstall "python-nautilus python-configobj python-gtk2 python-glade2 python-svn python-dbus python-dulwich subversion meld"
@@ -93,33 +105,21 @@ echo "安装CodeBlock..."
 AptInstall "codeblocks g++ wx-common libwxgtk3.0-0 build-essential  wxformbuilder codeblocks-dbg codeblocks-contrib wx3.0-headers  wx3.0-i18n"
 
 echo "安装gimp,Inkscape等图形软件..."
-AptInstall "gimp Inkscape Dia darktable darktable-plugins-experimental darktable-plugins-legacy"
+AptInstall "gimp Inkscape Dia darktable"
 
 echo "安装 fcitx 输入法..."
 AptInstall "fcitx fcitx-config-gtk fcitx-sunpinyin fcitx-googlepinyin fcitx-module-cloudpinyin"
 
-AptInstall "caffeine"
-
-AptInstall "openshot"
-
-AptInstall "keepass2"
-
-AptInstall "simplescreenrecorder"
-
-AptInstall "wireshark"
-
-AptInstall "aria2"
-
-AptInstall "unity-tweak-tool"
+AptInstall "caffeine openshot keepass2 simplescreenrecorder wireshark aria2 unity-tweak-tool xdotool"
 
 echo "主题相关..."
 AptInstall "^mac-ithemes-v[0-9] ^mac-icons-v[0-9]"
 
 echo "安装搜狗输入法..."
 if [[ is_64 == 1 ]]; then
-	wget -c "http://pinyin.sogou.com/linux/download.php?f=linux&bit=64" sogoupinyin.deb
+	wget -c "http://pinyin.sogou.com/linux/download.php?f=linux&bit=64"  -O sogoupinyin.deb
 else
-	wget -c "http://pinyin.sogou.com/linux/download.php?f=linux&bit=32" sogoupinyin.deb
+	wget -c "http://pinyin.sogou.com/linux/download.php?f=linux&bit=32"  -O sogoupinyin.deb
 fi
 sudo dpkg -i sogoupinyin.deb&& rm sogoupinyin.deb
 
@@ -129,37 +129,35 @@ AptInstall "virtualbox virtualbox-guest-additions-iso vde2"
 echo "安装 pidgin ... "
 AptInstall "libpurple0 pidgin pidgin-lwqq" 
 
-echo "安装goldendict..."
-AptInstall "goldendict goldendict-wordnet"
+echo "安装goldendict wiznote等..."
+AptInstall "goldendict goldendict-wordnet wiznote"
 
 echo "安装nautils相关..."
-AptInstall "nautilus-open-terminal nautilus-actions nautilus-dropbox"
+AptInstall "nautilus-open-terminal nautilus-actions "
 
 echo "安装其它杂七杂八.."
-AptInstall "unrar p7zip-full zhcon xbacklight shutter wallch wmctrl curl"
-AptInstall "vlc"
+AptInstall "unrar p7zip-full zhcon xbacklight shutter wmctrl curl"
 AptInstall "lm-sensors"
 AptInstall "hddtemp"
-AptInstall "skype"
 AptInstall "grive-tools"
-AptInstall "dconf-editor dconf-cli"
-AptInstall "gparted"
+AptInstall "gparted vlc skype dconf-editor dconf-cli"
 echo "exfat support ..."
 AptInstall "exfat-utils"
 
 echo "安装一些趣味命令行"
-AptInstall "sl cmatrix oneko libaa-bin toilet cowsay xcowsay xeyes moo"
+AptInstall "sl cmatrix oneko libaa-bin toilet cowsay xcowsay xeyes"
 
-echo "Nodejs...."
+AptInstall "nodejs-legacy"
+sudo npm install -g hexo
 
-sudo apt-get install python-software-properties
+AptInstall "python-software-properties"
 
 echo "嵌入式开发.."
 AptInstall "putty"
 AptInstall "openbsd-inetd tftp-hpa tftpd-hpa"
 AptInstall "nfs-kernel-server"
 AptInstall "minicom"
-AptInstall "bison flex mtd-utils"
+AptInstall "bison flex mtd-utils cmake"
 echo "设置tftp..."
 mkdir ~/Work/tftpboot
 chmod 777 ~/Work/tftpboot
@@ -180,8 +178,8 @@ sudo exportfs -av
 sudo service nfs-kernel-server restart 
 
 echo "安装zsh,tmux等并配置..."
-if [[ ! -d "linux-config" ]];then
-   git clone https://github.com/tracyone/dotfile
+if [[ ! -d "dotfiles" ]];then
+   git clone https://github.com/tracyone/dotfiles
 fi
 cd dotfile;./install.sh;cd -
 
@@ -193,7 +191,6 @@ AptInstall "chromium-browser"
 AptInstall "pepperflashplugin-nonfree"
 sudo update-pepperflashplugin-nonfree --install
 
-echo "Install Sogou input ..."
 
 
 echo "安装字体...需要很长时间请耐心等待..."
@@ -212,7 +209,7 @@ fi
 echo "为gnome-terminal安装solarized主题"
 git clone https://github.com/Anthony25/gnome-terminal-colors-solarized && cd gnome-terminal-colors-solarized && ./install.sh ; cd -
 
-if [[ -d "vim_conf" ]]; then
+if [[ ! -d "vim_conf" ]]; then
 	git clone https://github/tracyone/vim vim_conf
 fi
 if [[ $? -eq 0 ]]; then
