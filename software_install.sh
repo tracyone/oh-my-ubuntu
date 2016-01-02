@@ -70,6 +70,8 @@ echo "macubuntu主题仓库..."
 sudo add-apt-repository ppa:noobslab/themes -y
 echo "wiznote的仓库..."
 sudo add-apt-repository ppa:wiznote-team -y
+echo "Mutate仓库..."
+sudo add-apt-repository ppa:mutate/ppa -y
 echo "Support i386 architecture"
 
 sudo dpkg --add-architecture i386
@@ -136,7 +138,7 @@ echo "安装nautils相关..."
 AptInstall "nautilus-open-terminal nautilus-actions "
 
 echo "安装其它杂七杂八.."
-AptInstall "unrar p7zip-full zhcon xbacklight shutter wmctrl curl"
+AptInstall "unrar p7zip-full zhcon xbacklight shutter wmctrl curl mutate"
 AptInstall "lm-sensors"
 AptInstall "hddtemp"
 AptInstall "grive-tools"
