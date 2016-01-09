@@ -125,6 +125,10 @@ else
 fi
 sudo dpkg -i sogoupinyin.deb&& rm sogoupinyin.deb
 
+echo "安装TeamViewer..."
+wget -c "http://download.teamviewer.com/download/teamviewer_i386.deb" -O teamviewer.deb
+sudo dpkg -i teamviewer.deb&& rm teamviewer.deb
+
 echo "安装VirtualBox"
 AptInstall "virtualbox virtualbox-guest-additions-iso vde2"
 
