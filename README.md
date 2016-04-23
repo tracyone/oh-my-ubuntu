@@ -1,10 +1,18 @@
-# Ubuntu Install Dirary
+# This is The Ubuntu Way
 
-我将编写一个较为完整的安装脚本，方便以后在安装完系统之后迅速的搭建好环境。今天是2015-12-30/20:57:10。
+Make sure your ubuntu connect to the internet then run:
 
-## 在SSD上装Ubuntu 14.04
+```bash
+./oh-my-ubuntu.sh ./config/ubuntu_16.04.ini
+```
 
-1. 由于不可能是多系统/boot和/和/usr，这三个目录将在同个分区中。
+It will install all my favorite softwares automatically specified by `.config/ubuntu_16.04.ini`
+
+You can modify `./config/ubuntu_16.04.ini` according to your actual environment.
+
+## Best Partiton Scheme for Ubuntu
+
+1. 由于不可能是多系统`/boot`和`/`和`/usr`，这三个目录将在同个分区中。
 
 2. 由于我是8GB内存，所以不准备开swap。
 
@@ -20,10 +28,6 @@
 
 8. 制作系统启动U盘，使用ubuntu自带的**启动盘创建器**
 
-## ssd优化
-
-* **尽量避免长期写**，由于我的home分区是挂载到hdd硬盘上面，所以避免好多东西的读写。
-
-#  安装完ubuntu 14.04之后需要做的事情
+#  Things to do after installing Ubuntu
 
 1. 安装显卡驱动，本笔记本（y400）是nvidia gt650m直接在**附加驱动**里面更新即可。在次之前必须先执行`sudo apt-get update`
