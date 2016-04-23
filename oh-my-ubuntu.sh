@@ -16,6 +16,7 @@ OLD_IFS="$IFS"
 IFS=$'\x0A' 
 rm -f ${LOG_FILE}
 
+
 # {{{ function definition
 
 # $1:software list to install..
@@ -54,8 +55,6 @@ if [[ $# -eq 1 ]]; then
 		exit 3
 	fi
 	GIT_CONFIG="$1"
-elif [[  $# -eq 0 ]]; then
-	GIT_CONFIG="./config/ubuntu_x86_64.ini"
 else
 	echo -e "\nWrong usage!!\n"
 	echo -e "\n./oh-my-ubuntu.sh <path of ini file>\n"
@@ -76,7 +75,7 @@ if [[ $? -ne 0 ]]; then
 fi
 
 ppa_list=$(git config --get-all repo.ppa)
-echo "adding ppa ...${ppa_list}"
+echo "adding ppa ..."
 for i in ${ppa_list}; do
     if [[ $i != "" ]]; then
         echo -e "\nadd ppa $i\n"
