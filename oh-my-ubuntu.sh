@@ -15,6 +15,8 @@ LOG_FILE="omu.log"
 OLD_IFS="$IFS" 
 IFS=$'\x0A' 
 rm -f ${LOG_FILE}
+# prompt before every install
+PROMPT=1
 
 
 # {{{ function definition
@@ -32,19 +34,31 @@ function AptSingleInstall()
 
 function AptInstall()
 {
-	read -n1 -p "Install $1 ?(y/n)" ans
-	if [[ $ans =~ [Yy] ]]; then
+    ans=""
+    if [[  PROMPT -eq 1  ]]; then
+        read -n1 -p "Install $1 ?(y/n)" ans
+    fi
+	if [[ $ans =~ [Yy] || PROMPT -eq 0 ]]; then
 		sudo apt-get install $1 --allow-unauthenticated -y || AptSingleInstall "$1"
+        sleep 1
 	else
-		echo -e  "\nAbort install\n"
+		echo -e  "\n\nAbort install\n"
 	fi
-	sleep 2
 }
 
 # $1:section.key
-function Readinit()
+function AptAddRepo()
 {
-    echo 0;
+    ans=""
+    if [[  PROMPT -eq 1  ]]; then
+        read -n1 -p "Adding ppa $i? (y/n) " ans
+    fi
+    if [[ $ans =~ [Yy] || PROMPT -eq 0 ]]; then
+        sudo add-apt-repository -y $1 || echo -e "apt-add-repository failed : $1\n" >> ${LOG_FILE}
+        sleep 1
+    else
+        echo -e  "\n\nAbort install\n"
+    fi
 }
 
 # }}}
@@ -74,13 +88,16 @@ if [[ $? -ne 0 ]]; then
 	fi
 fi
 
+read -n1 -p "Install all software Without prompting?(y/n)" ans
+if [[  ${ans} =~ [yY] ]]; then
+    PROMPT=0
+fi
+
 ppa_list=$(git config --get-all repo.ppa)
-echo "adding ppa ..."
+echo -e "\n\nadding ppa ...\n"
 for i in ${ppa_list}; do
     if [[ $i != "" ]]; then
-        echo -e "\nadd ppa $i\n"
-        sudo add-apt-repository -y $i || echo -e "apt-add-repository failed : $i\n" >> ${LOG_FILE}
-        sleep 1
+        AptAddRepo $i
     fi
 done
 
