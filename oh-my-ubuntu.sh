@@ -7,7 +7,7 @@
 # write :git config section.key value 
 
 shopt -s expand_aliases
-read -p "请输入您的密码:" mypasswd
+read -p "Please input $(whoami)'s passwd: " mypasswd
 alias sudo="echo "${mypasswd}" | sudo -S"
 
 LOG_FILE="omu.log"
@@ -85,22 +85,19 @@ for i in ${ppa_list}; do
 done
 
 sudo dpkg --add-architecture i386
-echo "更新源...."
+echo "Update source ..."
 sudo apt-get update
-echo "更新系统..."
+echo "Upgrade ..."
 sudo apt-get upgrade -y
 
 deb_list=$(git config --get-all apt.packages)
 for i in ${deb_list}; do
 	if [[ $i != "" ]]; then
-		echo -e "\ninstall software  $i\n"
-        sleep 1
         AptInstall $i
-        sleep 1
 	fi
 done
 
-echo "清除工作...."
+echo "Clean ...."
 sudo apt-get autoremove -y
 sudo apt-get autoclean
 sudo apt-get clean
