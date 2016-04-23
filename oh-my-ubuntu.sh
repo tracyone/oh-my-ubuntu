@@ -61,6 +61,21 @@ function AptAddRepo()
     fi
 }
 
+function DebInstall()
+{
+    local filename="tmp$(date +%Y%m%d%H%M%S).deb"
+    ans=""
+    if [[  PROMPT -eq 1  ]]; then
+        read -n1 -p "Wget $i? (y/n) " ans
+    fi
+    if [[ $ans =~ [Yy] || PROMPT -eq 0 ]]; then
+        wget -c $1 -O ${filename}  || echo -e "Wget $1 failed\n" >> ${LOG_FILE}
+        sudo dpkg -i ${filename} || ( sudo apt-get -f install -y; sudo dpkg -i ${filename}  \
+            || echo -e "dpkg install ${filename}  form $1 failed\n" >> ${LOG_FILE} )
+    else
+        echo -e  "\n\nAbort install\n"
+    fi
+}
 # }}}
 
 if [[ $# -eq 1 ]]; then
@@ -107,11 +122,20 @@ sudo apt-get update
 echo "Upgrade ..."
 sudo apt-get upgrade -y
 
-deb_list=$(git config --get-all apt.packages)
-for i in ${deb_list}; do
-	if [[ $i != "" ]]; then
+echo -e "\n\nApt install ...\n"
+apt_list=$(git config --get-all apt.packages)
+for i in ${apt_list}; do
+    if [[ $i != "" ]]; then
         AptInstall $i
-	fi
+    fi
+done
+
+echo -e "\n\nDeb install ...\n"
+deb_list=$(git config --get-all deb.url)
+for i in ${deb_list}; do
+    if [[ $i != "" ]]; then
+        DebInstall $i
+    fi
 done
 
 echo -e "\nAll done!!Clean ...\n"
