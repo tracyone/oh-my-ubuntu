@@ -114,7 +114,7 @@ for i in ${deb_list}; do
 	fi
 done
 
-echo "Clean ...."
+echo -e "\nAll done!!Clean ...\n"
 sudo apt-get autoremove -y
 sudo apt-get autoclean
 sudo apt-get clean
