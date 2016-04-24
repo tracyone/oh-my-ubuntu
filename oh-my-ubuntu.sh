@@ -18,12 +18,12 @@ rm -f ${LOG_FILE}
 # prompt before every install
 PROMPT=1
 ROOT_DIR=$(pwd)
-
+ACTION="all"
 SRC_DIR=${HOME}/Work/Source
 mkdir -p ${SRC_DIR}
+GIT_CONFIG="./config/ubuntu_16.04.ini"
 
-
-# {{{ function definition
+# function definition {{{
 
 # $1:software list to install..
 function AptSingleInstall()
@@ -128,20 +128,69 @@ function BuildSrc()
     IFS=$'\x0A' 
 }
 
+function OmuShowHelp()
+{
+    echo -e "\nUsage:`basename $0` -f <path of ini file> [-a all|ppa|apt|download|build]\n"
+}
+
+function ProcessOptionA()
+{
+    ACTION=$1
+    case $1 in
+        all )
+            ;;
+        ppa )
+            ;;
+        apt )
+            ;;
+        download )
+            ;;
+        build )
+            ;;
+        * )
+            echo -e "\nUnsupport action $1\n"
+            OmuShowHelp
+            exit 3;
+            ;;
+    esac
+}
+
 # }}}
 
-if [[ $# -eq 1 ]]; then
-	if [[ ! -f $1 ]]; then
-		echo -e "\nFile $1 not exist!\n"
-		exit 3
-	fi
-	GIT_CONFIG="$1"
-else
-	echo -e "\nWrong usage!!\n"
-	echo -e "\n./oh-my-ubuntu.sh <path of ini file>\n"
-	exit 3
+# Script start  {{{
+
+# arg parse and env check {{{
+while getopts "f:a:" arg #选项后面的冒号表示该选项需要参数
+do
+		case $arg in
+			 f )
+                GIT_CONFIG=${OPTARG}
+				;;
+			 a )
+				ProcessOptionA ${OPTARG}
+				;;
+			* )
+				OmuShowHelp
+				exit 1
+				;;
+		esac
+done
+shift $(($OPTIND-1))
+if [[ !  -z $1 ]]; then
+    echo -e "\nUnknown option:$1\n"
+    OmuShowHelp
+    exit 3
 fi
+
+if [[  ! -f ${GIT_CONFIG} ]]; then
+    echo -e "\nConfig file ${OPTARG} is not exist\n";
+    OmuShowHelp
+    exit 3
+fi
+
 echo -e "\nUse Config file: ${GIT_CONFIG}\n"
+echo -e "Action is : ${ACTION}\n"
+
 export GIT_CONFIG
 
 which git > /dev/null
@@ -155,52 +204,73 @@ if [[ $? -ne 0 ]]; then
 	fi
 fi
 
+# }}}
+
 read -n1 -p "Install all software Without prompting?(y/n)" ans
 if [[  ${ans} =~ [yY] ]]; then
     PROMPT=0
+else
+    PROMPT=1
 fi
 
-ppa_list=$(git config --get-all repo.ppa)
-echo -e "\n\nadding ppa ...\n"
-for i in ${ppa_list}; do
-    if [[ $i != "" ]]; then
-        AptAddRepo $i
-    fi
-done
+if [[  ${ACTION} == "all" || ${ACTION} == "ppa" ]]; then
+    ppa_list=$(git config --get-all repo.ppa)
+    echo -e "\n\nadding ppa ...\n"
+    for i in ${ppa_list}; do
+        if [[ $i != "" ]]; then
+            AptAddRepo $i
+        fi
+    done
+fi
 
-sudo dpkg --add-architecture i386
-echo -e "\n\nUpdate source ...\n"
-sudo apt-get update
-echo -e "\n\nUpgrade ...\n"
-sudo apt-get upgrade -y
+if [[  PROMPT -eq 1  ]]; then
+    echo -e "\n\n"
+    read -n1 -p "Update Source (y/n) " ans
+fi
+if [[ $ans =~ [Yy] || PROMPT -eq 0 ]]; then
+    echo -e "\n\nAdding i386 packages support ...\n"
+    sudo dpkg --add-architecture i386
+    echo -e "\n\nUpdate source ...\n"
+    sudo apt-get update
+    echo -e "\n\nUpgrade ...\n"
+    sudo apt-get upgrade -y
+fi
 
-echo -e "\n\nApt install ...\n"
-apt_list=$(git config --get-all apt.packages)
-for i in ${apt_list}; do
-    if [[ $i != "" ]]; then
-        AptInstall $i
-    fi
-done
+if [[  ${ACTION} == "all" || ${ACTION} == "apt" ]]; then
+    echo -e "\n\nApt install ...\n"
+    apt_list=$(git config --get-all apt.packages)
+    for i in ${apt_list}; do
+        if [[ $i != "" ]]; then
+            AptInstall $i
+        fi
+    done
+fi
 
-echo -e "\n\nDeb install ...\n"
-deb_list=$(git config --get-all deb.url)
-for i in ${deb_list}; do
-    if [[ $i != "" ]]; then
-        DebInstall $i
-    fi
-done
+if [[  ${ACTION} == "all" || ${ACTION} == "download" ]]; then
+    echo -e "\n\nDeb install ...\n"
+    deb_list=$(git config --get-all download.url)
+    for i in ${deb_list}; do
+        if [[ $i != "" ]]; then
+            DebInstall $i
+        fi
+    done
+fi
 
-src_list=$(git config --get-all build.gitsrc)
-echo -e "\n\nInstall software from source ...\n"
-for i in ${src_list}; do
-    if [[ $i != "" ]]; then
-        BuildSrc $i
-    fi
-done
+if [[  ${ACTION} == "all" || ${ACTION} == "build" ]]; then
+    src_list=$(git config --get-all build.gitsrc)
+    echo -e "\n\nInstall software from source ...\n"
+    for i in ${src_list}; do
+        if [[ $i != "" ]]; then
+            BuildSrc $i
+        fi
+    done
+fi
 
 echo -e "\nAll done!!Clean ...\n"
 sudo apt-get autoremove -y
 sudo apt-get autoclean
 sudo apt-get clean
+
+# }}}
 
 # vim: set ft=sh fdm=marker foldlevel=0 foldmarker&: 
