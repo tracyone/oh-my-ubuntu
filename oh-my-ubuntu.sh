@@ -17,6 +17,10 @@ IFS=$'\x0A'
 rm -f ${LOG_FILE}
 # prompt before every install
 PROMPT=1
+ROOT_DIR=$(pwd)
+
+SRC_DIR=${HOME}/Work/Source
+mkdir -p ${SRC_DIR}
 
 
 # {{{ function definition
@@ -35,11 +39,14 @@ function AptSingleInstall()
 function AptInstall()
 {
     ans=""
+    if [[  $1 =~  ^[\ ]*$ ]]; then
+        return 3
+    fi
     if [[  PROMPT -eq 1  ]]; then
         read -n1 -p "Install $1 ?(y/n)" ans
     fi
 	if [[ $ans =~ [Yy] || PROMPT -eq 0 ]]; then
-		sudo apt-get install $1 --allow-unauthenticated -y || AptSingleInstall "$1"
+        sudo apt-get install $1 --allow-unauthenticated -y || AptSingleInstall "$1"
         sleep 1
 	else
 		echo -e  "\n\nAbort install\n"
@@ -76,6 +83,51 @@ function DebInstall()
         echo -e  "\n\nAbort install\n"
     fi
 }
+
+function BuildSrc()
+{
+    IFS=","
+    local -i count=0
+    local proj_str=""
+    if [[  PROMPT -eq 1  ]]; then
+        read -n1 -p "Build source $i? (y/n) " ans
+    fi
+    if [[ $ans =~ [Yy] || PROMPT -eq 0 ]]; then
+        for i in $1; do
+            echo -e "$i\n"
+            case ${count} in
+                0 )
+                    IFS=${OLD_IFS}
+                    proj_dir=${SRC_DIR}/$(basename $i .git)
+                    if [[ ! -d ${proj_dir}  ]]; then
+                        git clone $i ${proj_dir}/ || echo -e "git clone $i failed\n" >> ${LOG_FILE}
+                    else
+                        echo -e "Update source $(basename $i .git) ...\n"
+                        cd  ${proj_dir}
+                        git checkout -- .
+                        git pull || echo -e "Update source $(basename $i .git) failed\n" >> ${LOG_FILE}
+                    fi
+                    IFS=","
+                    ;;
+                1 )
+                    AptInstall $i
+                    ;;
+                2 )
+                    bash -c "cd ${proj_dir} && $i"
+                    ;;
+                *)
+                    echo -e "Wrong ini format in build section\n" >> ${LOG_FILE}
+                    ;;
+            esac
+            let "count+=1"
+        done
+    else
+        echo -e  "\n\nAbort install\n"
+    fi
+    cd ${ROOT_DIR}
+    IFS=$'\x0A' 
+}
+
 # }}}
 
 if [[ $# -eq 1 ]]; then
@@ -135,6 +187,14 @@ deb_list=$(git config --get-all deb.url)
 for i in ${deb_list}; do
     if [[ $i != "" ]]; then
         DebInstall $i
+    fi
+done
+
+src_list=$(git config --get-all build.gitsrc)
+echo -e "\n\nInstall software from source ...\n"
+for i in ${src_list}; do
+    if [[ $i != "" ]]; then
+        BuildSrc $i
     fi
 done
 
