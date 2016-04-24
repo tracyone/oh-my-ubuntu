@@ -10,17 +10,16 @@ shopt -s expand_aliases
 read -p "Please input $(whoami)'s passwd: " mypasswd
 alias sudo="echo "${mypasswd}" | sudo -S"
 
-LOG_FILE="omu.log"
-# 设置分隔符为换行符号
+# set the separator to \n
 OLD_IFS="$IFS" 
 IFS=$'\x0A' 
-rm -f ${LOG_FILE}
-# prompt before every install
-PROMPT=1
+
+# default setting
+LOG_FILE="omu.log"
+PROMPT=1 # prompt before every install
 ROOT_DIR=$(pwd)
 ACTION="all"
 SRC_DIR=${HOME}/Work/Source
-mkdir -p ${SRC_DIR}
 GIT_CONFIG="./config/ubuntu_16.04.ini"
 
 # function definition {{{
@@ -33,7 +32,7 @@ function AptSingleInstall()
     do
         sudo apt-get install $i --allow-unauthenticated -y || echo -e "apt-get install failed : $i\n" >> ${LOG_FILE}
     done
-    IFS=${OLD_IFS}
+    IFS=$'\x0A'
 }
 
 function AptInstall()
@@ -128,8 +127,26 @@ function BuildSrc()
     IFS=$'\x0A' 
 }
 
+function PrintInfo()
+{
+    cat << "EOF"
+==============================================================
+          ___  __  __ _   _ 
+         / _ \|  \/  | | | |
+        | | | | |\/| | | | |
+        | |_| | |  | | |_| |
+         \___/|_|  |_|\___/  
+
+    Author  :tracyone at live dot cn                   
+    Project :https://github.com/tracyone/oh-my-ubuntu.git
+==============================================================
+EOF
+}
+
 function OmuShowHelp()
 {
+    PrintInfo
+    echo -e "\n$1"
     echo -e "\nUsage:`basename $0` -f <path of ini file> [-a all|ppa|apt|download|build]\n"
 }
 
@@ -148,8 +165,7 @@ function ProcessOptionA()
         build )
             ;;
         * )
-            echo -e "\nUnsupport action $1\n"
-            OmuShowHelp
+            OmuShowHelp "Unsupport action $1"
             exit 3;
             ;;
     esac
@@ -177,14 +193,12 @@ do
 done
 shift $(($OPTIND-1))
 if [[ !  -z $1 ]]; then
-    echo -e "\nUnknown option:$1\n"
-    OmuShowHelp
+    OmuShowHelp "Unknown option:$1"
     exit 3
 fi
 
 if [[  ! -f ${GIT_CONFIG} ]]; then
-    echo -e "\nConfig file ${OPTARG} is not exist\n";
-    OmuShowHelp
+    OmuShowHelp "Config file ${OPTARG} is not exist\n"
     exit 3
 fi
 
@@ -205,6 +219,9 @@ if [[ $? -ne 0 ]]; then
 fi
 
 # }}}
+
+rm -f ${LOG_FILE}
+mkdir -p ${SRC_DIR}
 
 read -n1 -p "Install all software Without prompting?(y/n)" ans
 if [[  ${ans} =~ [yY] ]]; then
@@ -270,6 +287,7 @@ echo -e "\nAll done!!Clean ...\n"
 sudo apt-get autoremove -y
 sudo apt-get autoclean
 sudo apt-get clean
+PrintInfo
 
 # }}}
 
