@@ -10,17 +10,14 @@ shopt -s expand_aliases
 read -p "Please input $(whoami)'s passwd: " mypasswd
 alias sudo="echo "${mypasswd}" | sudo -S"
 
-# set the separator to \n
-OLD_IFS="$IFS" 
-IFS=$'\x0A' 
-
-# default setting
+# variable default setting {{{
 LOG_FILE="omu.log"
 PROMPT=1 # prompt before every install
-ROOT_DIR=$(pwd)
+ROOT_DIR=$(pwd) #do not change
 ACTION="all"
 SRC_DIR=${HOME}/Work/Source
 GIT_CONFIG="./config/ubuntu_16.04.ini"
+# }}}
 
 # function definition {{{
 
@@ -93,7 +90,6 @@ function BuildSrc()
     fi
     if [[ $ans =~ [Yy] || PROMPT -eq 0 ]]; then
         for i in $1; do
-            echo -e "$i\n"
             case ${count} in
                 0 )
                     IFS=${OLD_IFS}
@@ -101,7 +97,7 @@ function BuildSrc()
                     if [[ ! -d ${proj_dir}  ]]; then
                         git clone $i ${proj_dir}/ || echo -e "git clone $i failed\n" >> ${LOG_FILE}
                     else
-                        echo -e "Update source $(basename $i .git) ...\n"
+                        echo -e "\n\nUpdating $(basename $i .git)'s source code' ...\n"
                         cd  ${proj_dir}
                         git checkout -- .
                         git pull || echo -e "Update source $(basename $i .git) failed\n" >> ${LOG_FILE}
@@ -222,6 +218,11 @@ fi
 
 rm -f ${LOG_FILE}
 mkdir -p ${SRC_DIR}
+
+# set the separator to \n
+OLD_IFS="$IFS" 
+IFS=$'\x0A' 
+
 
 read -n1 -p "Install all software Without prompting?(y/n)" ans
 if [[  ${ans} =~ [yY] ]]; then
