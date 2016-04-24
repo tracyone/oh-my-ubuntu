@@ -33,7 +33,7 @@ If you choose `n`,then you can confirm every item before it start install.
 
 It will install all my favorite softwares specified by `.config/ubuntu_16.04.ini`
 
-You can modify `./config/ubuntu_16.04.ini` according to your actual environment. see [INI file formate](#ini_file_format)
+You can modify `./config/ubuntu_16.04.ini` according to your actual environment. see [INI file formate](#ini-file-format)
 
 # Usage
 
