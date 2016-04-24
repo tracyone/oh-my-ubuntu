@@ -21,16 +21,19 @@ and
 **Easy to use**
 
 
-
 Make sure your ubuntu connect to the internet then run:
 
 ```bash
 ./oh-my-ubuntu.sh -f ./config/ubuntu_16.04.ini
 ```
 
-It will install all my favorite softwares **automatically** specified by `.config/ubuntu_16.04.ini`
+It will ask you whether prompt or not,if you choose `y`,then all the software will install **automatically**.
 
-You can modify `./config/ubuntu_16.04.ini` according to your actual environment.
+If you choose `n`,then you can confirm every item before it start install.
+
+It will install all my favorite softwares specified by `.config/ubuntu_16.04.ini`
+
+You can modify `./config/ubuntu_16.04.ini` according to your actual environment. see [INI file formate](#INI_file_format)
 
 # Usage
 
