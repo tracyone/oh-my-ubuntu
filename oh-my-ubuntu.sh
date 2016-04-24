@@ -117,9 +117,9 @@ for i in ${ppa_list}; do
 done
 
 sudo dpkg --add-architecture i386
-echo "Update source ..."
+echo -e "\n\nUpdate source ...\n"
 sudo apt-get update
-echo "Upgrade ..."
+echo -e "\n\nUpgrade ...\n"
 sudo apt-get upgrade -y
 
 echo -e "\n\nApt install ...\n"
