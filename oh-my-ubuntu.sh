@@ -167,6 +167,28 @@ function ProcessOptionA()
     esac
 }
 
+function configure()
+{
+	local package_lack=""
+	for i in $1
+	do
+		which $i > /dev/null 2>&1
+		if [[ $? -ne 0 ]]; then
+			echo -e "\nChecking for $i ..... no\n"
+			package_lack="$i ${package_lack}"
+		else
+			echo -e "\nChecking for $i ..... yes\n"
+		fi
+	done	
+	if [[ ${package_lack} != "" ]]; then
+        echo -e "Before install ${package_lack},we update apt Source first ..... \n"
+        sudo apt-get update
+        echo -e "apt-get install ${package_lack} ..... \n"
+		sudo apt-get install -y ${package_lack} || return 3
+	fi
+    return 0
+}
+
 # }}}
 
 # Script start  {{{
@@ -203,18 +225,10 @@ echo -e "Action is : ${ACTION}\n"
 
 export GIT_CONFIG
 
-which git > /dev/null
-if [[ $? -ne 0 ]]; then
-    echo -e "Install git ..."
-	sudo apt-get update
-	sudo apt-get install git -y
-	if [[ $? -ne 0 ]]; then
-		echo -e "\nInstall git failed\n"
-		exit 3
-	fi
-fi
 
 # }}}
+
+configure "git wget rm mkdir" || exit 3
 
 rm -f ${LOG_FILE}
 mkdir -p ${SRC_DIR}
