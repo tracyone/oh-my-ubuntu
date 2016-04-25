@@ -18,7 +18,7 @@ A software-install shell script for **Ubuntu** that is:
 
 and
 
-**Easy to use**
+**Easy to use**.
 
 
 Make sure your ubuntu connect to the internet then run:
@@ -27,13 +27,13 @@ Make sure your ubuntu connect to the internet then run:
 ./oh-my-ubuntu.sh -f ./config/ubuntu_16.04.ini
 ```
 
-It will ask you whether prompt or not,if you choose `y`,then all the software will install **automatically**.
+It will ask you whether prompt or not, if you choose `y`, then all the software will install **automatically**.
 
-If you choose `n`,then you can confirm every item before it start install.
+If you choose `n`, then you can confirm every item before it start install.
 
 It will install all my favorite softwares specified by `.config/ubuntu_16.04.ini`
 
-You can modify `./config/ubuntu_16.04.ini` according to your actual environment. see [INI file formate](#ini-file-format)
+You can modify `./config/ubuntu_16.04.ini` according to your actual environment. see [INI file formate](#ini-file-format).
 
 # Usage
 
@@ -41,20 +41,24 @@ You can modify `./config/ubuntu_16.04.ini` according to your actual environment.
 ./oh-my-ubuntu.sh [-f <path of ini file>] [-a all|ppa|apt|download|build]"
 ```
 
-`-f`:specified the path of ini file
+`-f`: specified the path of ini file
 
-`-a`:You can execute one of following function alone.
+`-a`: You can execute one of following function alone.
 
-1. ppa:add ppa 
-2. apt:Install packags through `apt-ght install`
-3. download:Download deb file from internet then install.
-3. build:build and install software from source code (Currently only support get source code from git server like github or gitlab)
+1. ppa:      add ppa then update apt source
+2. apt:      Install packags through `apt-ght install`
+3. download: Download deb file from internet then install.
+3. build:    build and install software from source code (Currently only support get source code from git server like github or gitlab)
 
 You can call `./oh-my-ubuntu.sh` without any argument:
 
 Default argument of `-f` option is `config/ubuntu_16.04.ini`。
 
 Default argument of `-a` option is `all`.
+
+All the source code will install to the path specified by variable `SRC_DIR` (Default is `${HOME}/Work/Source`).
+
+If the source code is aleady exist, then oh-my-ubuntu will try to update it then install.
 
 ## INI file format
 
