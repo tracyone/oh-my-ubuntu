@@ -259,9 +259,14 @@ if [[  PROMPT -eq 1  ]]; then
     echo -e "\n\n"
     read -n1 -p "Update Source (y/n) " ans
 fi
+
+ARCH=$(git config --get-all info.arch)
+
 if [[ $ans =~ [Yy] || PROMPT -eq 0 ]]; then
-    echo -e "\n\nAdding i386 packages support ...\n"
-    sudo dpkg --add-architecture i386
+    if [[  ${ARCH} == "x64" ]]; then
+        echo -e "\n\nAdding i386 packages support ...\n"
+        sudo dpkg --add-architecture i386
+    fi
     echo -e "\n\nUpdate source ...\n"
     sudo apt-get update
     echo -e "\n\nUpgrade ...\n"
