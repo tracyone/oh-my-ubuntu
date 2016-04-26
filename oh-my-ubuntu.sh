@@ -1,6 +1,6 @@
 #!/bin/bash
 # author:tracyone,tracyone@live.cn
-# ./oh-my-ubuntu.sh <path of ini file>
+# ./oh-my-ubuntu.sh -f <path of ini file> [-a all|ppa|apt|download|build]
 # Core theory:git can read or write standard ini file easily.
 # For example:
 # read :git config section.key
