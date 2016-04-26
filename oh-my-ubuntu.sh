@@ -6,7 +6,7 @@
 # read :git config section.key
 # write :git config section.key value 
 
-shopt -s expand_aliases
+shopt -s expand_aliases #enable alias in bash shell 
 read -p "Please input $(whoami)'s passwd: " mypasswd
 alias sudo="echo "${mypasswd}" | sudo -S"
 
@@ -97,7 +97,7 @@ function BuildSrc()
                     if [[ ! -d ${proj_dir}  ]]; then
                         git clone $i ${proj_dir}/ || echo -e "git clone $i failed\n" >> ${LOG_FILE}
                     else
-                        echo -e "\n\nUpdating $(basename $i .git)'s source code' ...\n"
+                        echo -e "\n\nUpdating $(basename $i .git)'s source code ...\n"
                         cd  ${proj_dir}
                         git checkout -- .
                         git pull || echo -e "Update source $(basename $i .git) failed\n" >> ${LOG_FILE}
@@ -108,7 +108,7 @@ function BuildSrc()
                     AptInstall $i
                     ;;
                 2 )
-                    bash -c "cd ${proj_dir} && $i"
+                    bash -c "$(child_shell_execute "cd ${proj_dir} && $i")"
                     ;;
                 *)
                     echo -e "Wrong ini format in build section\n" >> ${LOG_FILE}
@@ -189,6 +189,12 @@ function configure()
     return 0
 }
 
+function child_shell_execute()
+{
+    local tmp="echo ${mypasswd} |sudo -S "
+    echo "$(echo $1 | sed "s/\<sudo\>/${tmp}/g")"
+}
+
 # }}}
 
 # Script start  {{{
@@ -225,10 +231,10 @@ echo -e "Action is : ${ACTION}\n"
 
 export GIT_CONFIG
 
+configure "git wget rm mkdir" || exit 3
 
 # }}}
 
-configure "git wget rm mkdir" || exit 3
 
 rm -f ${LOG_FILE}
 mkdir -p ${SRC_DIR}
