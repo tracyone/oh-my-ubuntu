@@ -237,7 +237,7 @@ configure "git wget rm mkdir" || exit 3
 
 
 rm -f ${LOG_FILE}
-mkdir -p ${SRC_DIR}
+mkdir -p ${SRC_DIR} || exit 3
 
 # set the separator to \n
 OLD_IFS="$IFS" 
