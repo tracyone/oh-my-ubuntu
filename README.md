@@ -46,12 +46,14 @@ You can modify `./config/ubuntu_16.04.ini` according to your actual environment.
 # Usage
 
 ```bash
-./oh-my-ubuntu.sh [-f <path of ini file>] [-a all|ppa|apt|download|build]"
+./oh-my-ubuntu.sh [-f <path of ini file>] [-a all|ppa|apt|download|build] [-h]"
 ```
 
 `-f`: specified the path of ini file
 
 `-a`: You can execute one of following function alone.
+
+`-h`: Show usage of oh-my-ubuntu
 
 1. ppa:      add ppa then update apt source
 2. apt:      Install packags through `apt-ght install`

@@ -1,6 +1,6 @@
 #!/bin/bash
 # author:tracyone,tracyone@live.cn
-# ./oh-my-ubuntu.sh [-f <path of ini file>] [-a all|ppa|apt|download|build]
+# ./oh-my-ubuntu.sh [-f <path of ini file>] [-a all|ppa|apt|download|build] [-h]
 # Core theory:git can read or write standard ini file easily.
 # For example:
 # read :git config section.key
@@ -143,7 +143,7 @@ function OmuShowHelp()
 {
     PrintInfo
     echo -e "\n$1"
-    echo -e "\nUsage:`basename $0` [-f <path of ini file>] [-a all|ppa|apt|download|build]\n"
+    echo -e "\nUsage:`basename $0` [-f <path of ini file>] [-a all|ppa|apt|download|build] [-h]\n"
 }
 
 function ProcessOptionA()
@@ -200,7 +200,7 @@ function child_shell_execute()
 # Script start  {{{
 
 # arg parse and env check {{{
-while getopts "f:a:" arg #选项后面的冒号表示该选项需要参数
+while getopts "f:a:h" arg #选项后面的冒号表示该选项需要参数
 do
 		case $arg in
 			 f )
@@ -208,6 +208,10 @@ do
 				;;
 			 a )
 				ProcessOptionA ${OPTARG}
+				;;
+			 h )
+				OmuShowHelp
+                exit 0
 				;;
 			* )
 				OmuShowHelp
