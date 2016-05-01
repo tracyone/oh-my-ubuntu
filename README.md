@@ -51,9 +51,10 @@ You can modify `./config/ubuntu_16.04.ini` according to your actual environment.
 
 `-f`: specified the path of ini file
 
+`-h`: Show the usage of oh-my-ubuntu
+
 `-a`: You can execute one of following function alone.
 
-`-h`: Show usage of oh-my-ubuntu
 
 1. ppa:      add ppa then update apt source
 2. apt:      Install packags through `apt-ght install`
