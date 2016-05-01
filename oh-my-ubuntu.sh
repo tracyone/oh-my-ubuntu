@@ -108,7 +108,7 @@ function BuildSrc()
                     AptInstall $i
                     ;;
                 2 )
-                    bash -c "$(child_shell_execute "cd ${proj_dir} && $i")"
+                    child_shell_execute "cd ${proj_dir} && $i"
                     ;;
                 *)
                     echo -e "Wrong ini format in build section\n" >> ${LOG_FILE}
@@ -192,7 +192,7 @@ function configure()
 function child_shell_execute()
 {
     local tmp="echo ${mypasswd} |sudo -S "
-    echo "$(echo $1 | sed "s/\<sudo\>/${tmp}/g")"
+    bash -c "$(echo $1 | sed "s/\<sudo\>/${tmp}/g")"
 }
 
 # }}}
