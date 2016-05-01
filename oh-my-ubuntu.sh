@@ -24,12 +24,13 @@ GIT_CONFIG="./config/ubuntu_16.04.ini"
 # $1:software list to install..
 function AptSingleInstall()
 {
+    local oldifs=${IFS}
     IFS=" "
     for i in $1
     do
         sudo apt-get install $i --allow-unauthenticated -y || echo -e "apt-get install failed : $i\n" >> ${LOG_FILE}
     done
-    IFS=$'\x0A'
+    IFS=${oldifs}
 }
 
 function AptInstall()
