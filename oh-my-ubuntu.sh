@@ -34,6 +34,8 @@ function AptSingleInstall()
 
 function AptInstall()
 {
+    local oldifs=${IFS}
+    IFS=" "
     ans=""
     if [[  $1 =~  ^[\ ]*$ ]]; then
         return 3
@@ -47,6 +49,7 @@ function AptInstall()
 	else
 		echo -e  "\n\nAbort install\n"
 	fi
+    IFS=${oldifs}
 }
 
 # $1:section.key
