@@ -33,7 +33,7 @@ If you choose `n`, then you can confirm every item before it start install.
 
 It will install all my favorite softwares specified by `.config/ubuntu_16.04.ini`
 
-You can modify `./config/ubuntu_16.04.ini` according to your actual environment. see [INI file formate](#ini-file-format).
+You can modify `./config/ubuntu_16.04.ini` according to your actual environment. see [INI file format](#ini-file-format).
 
 # Feature
 
@@ -51,9 +51,10 @@ You can modify `./config/ubuntu_16.04.ini` according to your actual environment.
 
 `-f`: specified the path of ini file
 
+`-h`: Show the usage of oh-my-ubuntu
+
 `-a`: You can execute one of following function alone.
 
-`-h`: Show usage of oh-my-ubuntu
 
 1. ppa:      add ppa then update apt source
 2. apt:      Install packags through `apt-ght install`
