@@ -1,6 +1,6 @@
 #!/bin/bash
 # author:tracyone,tracyone@live.cn
-# ./oh-my-ubuntu.sh -f <path of ini file> [-a all|ppa|apt|download|build]
+# ./oh-my-ubuntu.sh [-f <path of ini file>] [-a all|ppa|apt|download|build]
 # Core theory:git can read or write standard ini file easily.
 # For example:
 # read :git config section.key
@@ -143,7 +143,7 @@ function OmuShowHelp()
 {
     PrintInfo
     echo -e "\n$1"
-    echo -e "\nUsage:`basename $0` -f <path of ini file> [-a all|ppa|apt|download|build]\n"
+    echo -e "\nUsage:`basename $0` [-f <path of ini file>] [-a all|ppa|apt|download|build]\n"
 }
 
 function ProcessOptionA()
