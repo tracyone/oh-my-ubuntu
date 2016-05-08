@@ -77,7 +77,7 @@ function DebInstall()
     fi
     if [[ $ans =~ [Yy] || PROMPT -eq 0 ]]; then
         wget -c $1 -O ${filename}  || echo -e "Wget $1 failed\n" >> ${LOG_FILE}
-        sudo dpkg -i ${filename} || ( sudo apt-get -f install -y; sudo dpkg -i ${filename}  \
+        sudo dpkg -i ${filename} || ( sudo apt-get -f install --fix-missing -y; sudo dpkg -i ${filename}  \
             || echo -e "dpkg install ${filename}  form $1 failed\n" >> ${LOG_FILE} )
     else
         echo -e  "\n\nAbort install\n"
