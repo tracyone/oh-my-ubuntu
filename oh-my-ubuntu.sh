@@ -6,11 +6,6 @@
 # read :git config section.key
 # write :git config section.key value 
 
-stty -echo
-shopt -s expand_aliases #enable alias in bash shell 
-read -p "Please input $(whoami)'s passwd: " mypasswd
-alias sudo="echo "${mypasswd}" | sudo -S"
-stty echo
 
 # variable default setting {{{
 LOG_FILE="omu.log"
@@ -225,6 +220,13 @@ do
 				;;
 		esac
 done
+
+stty -echo
+shopt -s expand_aliases #enable alias in bash shell 
+read -p "Please input $(whoami)'s passwd: " mypasswd
+alias sudo="echo "${mypasswd}" | sudo -S"
+stty echo
+
 shift $(($OPTIND-1))
 if [[ !  -z $1 ]]; then
     OmuShowHelp "Unknown option:$1"
