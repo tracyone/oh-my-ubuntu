@@ -13,7 +13,7 @@ PROMPT=1 # prompt before every install
 ROOT_DIR=$(pwd) #do not change
 ACTION="all"
 SRC_DIR=${HOME}/Work/Source
-GIT_CONFIG="./config/ubuntu_16.04.ini"
+GIT_CONFIG="./config/ubuntu_18.04.ini"
 # }}}
 
 # function definition {{{
